@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<ownershipDocument>
+  <schemaVersion>X0508</schemaVersion>
+  <documentType>4</documentType>
+  <issuer>
+    <issuerCik>0001094517</issuerCik>
+    <issuerName>Toyota Motor Corp</issuerName>
+    <issuerTradingSymbol>TM</issuerTradingSymbol>
+  </issuer>
+  <reportingOwner>
+    <reportingOwnerId>
+      <rptOwnerCik>0007654321</rptOwnerCik>
+      <rptOwnerName>John Smith</rptOwnerName>
+    </reportingOwnerId>
+    <reportingOwnerRelationship>
+      <isDirector>0</isDirector>
+      <isOfficer>1</isOfficer>
+      <isTenPercentOwner>0</isTenPercentOwner>
+      <isOther>0</isOther>
+      <officerTitle>VP Finance</officerTitle>
+    </reportingOwnerRelationship>
+  </reportingOwner>
+  <periodOfReport>2026-08-01</periodOfReport>
+  <nonDerivativeTable>
+    <nonDerivativeTransaction>
+      <securityTitle>
+        <value>Common Stock</value>
+      </securityTitle>
+      <transactionDate>
+        <value>2026-08-01</value>
+      </transactionDate>
+      <transactionCoding>
+        <transactionFormType>4</transactionFormType>
+        <transactionCode>S</transactionCode>
+      </transactionCoding>
+      <transactionAmounts>
+        <transactionShares>
+          <value>200</value>
+        </transactionShares>
+        <transactionPricePerShare>
+          <value>148.00</value>
+        </transactionPricePerShare>
+        <transactionAcquiredDisposedCode>
+          <value>D</value>
+        </transactionAcquiredDisposedCode>
+      </transactionAmounts>
+      <postTransactionAmounts>
+        <sharesOwnedFollowingTransaction>
+          <value>800</value>
+        </sharesOwnedFollowingTransaction>
+      </postTransactionAmounts>
+      <transactionFootnoteIndex id="F1"/>
+    </nonDerivativeTransaction>
+  </nonDerivativeTable>
+  <footnotes>
+    <footnote id="F1">This sale was effected pursuant to a Rule 10b5-1 trading plan adopted on 2026-02-01.</footnote>
+  </footnotes>
+</ownershipDocument>
