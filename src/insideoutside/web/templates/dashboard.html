@@ -136,11 +136,13 @@
         return Array.prototype.slice.call(tbody.querySelectorAll("tr[data-search]"));
       }
 
-      function getMatchingRows() {
+      function getMatchingCount() {
         var query = searchBox.value.trim().toLowerCase();
-        return getRows().filter(function (row) {
-          return !query || row.dataset.search.indexOf(query) !== -1;
+        var count = 0;
+        getRows().forEach(function (row) {
+          if (!query || row.dataset.search.indexOf(query) !== -1) count += 1;
         });
+        return count;
       }
 
       function resetPaging() {
@@ -149,30 +151,36 @@
       }
 
       function render() {
-        var matching = getMatchingRows();
+        var rows = getRows();
+        var query = searchBox.value.trim().toLowerCase();
+        var matching = rows.filter(function (row) {
+          return !query || row.dataset.search.indexOf(query) !== -1;
+        });
         visibleCount.textContent = matching.length;
+        rows.forEach(function (row) { row.classList.add("hidden"); });
 
-        getRows().forEach(function (row) { row.classList.add("hidden"); });
-
-        var toShow;
-        if (pageSize === "infinite") {
-          paginationControls.hidden = true;
-          toShow = matching.slice(0, infiniteRevealCount);
-          endOfList.hidden = matching.length === 0 || infiniteRevealCount < matching.length;
+        var isInfinite = pageSize === "infinite";
+        var start = 0;
+        var end;
+        if (isInfinite) {
+          end = infiniteRevealCount;
         } else {
-          paginationControls.hidden = false;
-          endOfList.hidden = true;
           var size = parseInt(pageSize, 10);
           var totalPages = Math.max(1, Math.ceil(matching.length / size));
           currentPage = Math.min(Math.max(currentPage, 1), totalPages);
-          var start = (currentPage - 1) * size;
-          toShow = matching.slice(start, start + size);
+          start = (currentPage - 1) * size;
+          end = start + size;
+        }
+
+        paginationControls.hidden = isInfinite;
+        endOfList.hidden = !isInfinite || matching.length === 0 || end < matching.length;
+        if (!isInfinite) {
           pageIndicator.textContent = "Page " + currentPage + " of " + totalPages;
           prevButton.disabled = currentPage <= 1;
           nextButton.disabled = currentPage >= totalPages;
         }
 
-        toShow.forEach(function (row) { row.classList.remove("hidden"); });
+        matching.slice(start, end).forEach(function (row) { row.classList.remove("hidden"); });
       }
 
       function applySort() {
@@ -246,7 +254,7 @@
         if (pageSize !== "infinite") return;
         var nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 200;
         if (!nearBottom) return;
-        var matchingCount = getMatchingRows().length;
+        var matchingCount = getMatchingCount();
         if (infiniteRevealCount >= matchingCount) return;
         infiniteRevealCount += INFINITE_BATCH;
         render();
