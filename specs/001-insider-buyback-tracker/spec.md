@@ -132,6 +132,44 @@ changes required.
 
 ---
 
+### User Story 5 - Control how many signals are shown at once (Priority: P5)
+
+As the user, I want to choose how many signal rows are visible at a time — a fixed
+count (10, 25, or 50) or an "infinite scroll" mode that reveals more automatically
+as I scroll — so the dashboard stays manageable whether I have a handful of signals
+or hundreds.
+
+**Why this priority**: A display-density preference on top of the dashboard from
+User Story 1 and the sort/search from User Story 4 — useful as signal history
+grows, but the dashboard is fully usable with a single long list without it, so
+it's the lowest priority story.
+
+**Independent Test**: Can be fully tested by loading a dashboard with more rows
+than the smallest page-size option, selecting each page-size option and confirming
+only that many rows are visible at once (with a way to reach the rest), switching
+to infinite scroll and confirming additional rows appear as the user scrolls near
+the bottom, and reloading the page to confirm the last-selected option is still
+applied — no ingestion, classification, or API changes required.
+
+**Acceptance Scenarios**:
+
+1. **Given** the dashboard has more signals than the smallest page-size option,
+   **When** the user selects "10 rows," **Then** only 10 rows are visible at once
+   and the user has a way to reach additional rows.
+2. **Given** the user selects "25 rows" or "50 rows," **When** the selection is
+   applied, **Then** the visible row count matches the selection.
+3. **Given** the user selects "infinite scroll," **When** the user scrolls near the
+   bottom of the visible rows, **Then** additional rows are automatically revealed
+   without a page reload or an explicit "load more" click.
+4. **Given** a sort order or search filter is active, **When** the user changes the
+   page-size/infinite-scroll selection, **Then** the active sort and search results
+   remain applied to the newly-visible rows rather than resetting.
+5. **Given** the user selected a display option on a previous visit, **When** the
+   user reloads or reopens the dashboard, **Then** the same option is still
+   selected without the user having to reselect it.
+
+---
+
 ### Edge Cases
 
 - What happens when a Form 4 filing is later amended or corrected by the filer?
@@ -152,6 +190,13 @@ changes required.
   distinguishable to the user.
 - What happens when email delivery fails (bounced address, provider outage)? The
   signal MUST still be visible on the dashboard even if its notification failed.
+- What happens when "infinite scroll" reaches the last available signal? The
+  dashboard MUST indicate no further rows remain rather than showing a perpetual
+  loading state.
+- What happens when the total number of signals is smaller than the selected page
+  size (e.g., "50 rows" selected but only 6 signals exist)? All available rows MUST
+  be shown with no empty placeholder rows or pagination controls implying more
+  exist.
 
 ## Requirements *(mandatory)*
 
@@ -210,6 +255,16 @@ changes required.
   signal type, company, and amount, in either ascending or descending order.
 - **FR-019**: Dashboard MUST allow the user to filter displayed signals with a
   free-text search matching against company name, ticker, and signal details.
+- **FR-020**: Dashboard MUST allow the user to choose how many signal rows are
+  visible at once: a fixed count of 10, 25, or 50, or an "infinite scroll" mode.
+- **FR-021**: When "infinite scroll" is selected, dashboard MUST automatically
+  reveal additional rows as the user scrolls near the bottom of the currently
+  visible rows, without requiring an explicit "load more" action or page reload.
+- **FR-022**: Dashboard MUST persist the user's selected page-size/infinite-scroll
+  preference across page reloads.
+- **FR-023**: When a fixed page size is selected, dashboard MUST provide a way to
+  reach rows beyond the current page without losing the active sort order or
+  search filter.
 
 ### Key Entities
 
@@ -251,6 +306,10 @@ changes required.
 - **SC-007**: A user can locate the largest signal by amount, or all signals for a
   specific company, using only on-page sorting and search — no page reload or
   separate query required.
+- **SC-008**: A user can switch between page-size options or infinite scroll and
+  see the change take effect immediately, with no full page reload.
+- **SC-009**: A user's page-size/infinite-scroll preference from a previous visit
+  is still applied the next time they open the dashboard, without reselecting it.
 
 ## Assumptions
 
@@ -293,3 +352,16 @@ changes required.
   Constitution Principle I's scope (data ingestion, parsing, and business logic) —
   automated coverage here is limited to asserting the dashboard renders the
   sortable headers and per-row data attributes the client-side behavior depends on.
+- Page-size/infinite-scroll (User Story 5) extends the same client-side-only
+  approach as User Story 4: the server continues to render all currently-notable
+  signals into the page in one response (raising the dashboard's effective row
+  cap as needed so this stays true at the user's actual data volume), and
+  "10/25/50 rows" or "infinite scroll" purely controls how many of those
+  already-rendered rows are revealed at once — no new `/api/signals` query
+  parameters, pagination endpoint, or JS framework are introduced. This keeps
+  page-size interacting correctly with sort/search "for free," since both
+  features operate on the same already-loaded row set. The selected preference
+  persists via the browser's local storage (not a server-side user setting,
+  consistent with this being a single-user, no-accounts tool per the assumption
+  below). Like User Story 4, this is verified by manual browser testing rather
+  than an automated test.

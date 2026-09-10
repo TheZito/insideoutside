@@ -38,3 +38,11 @@
   different, defensible interpretations that would change scope.
 - Trading/brokerage execution is explicitly excluded per user instruction and
   tracked as deferred, separate future work (see FR-017 and Assumptions).
+- **2026-09-10 amendment**: Added User Story 5 (page-size/infinite-scroll control),
+  FR-020–FR-023, SC-008/SC-009, two edge cases, and an Assumptions entry. Re-ran
+  all checklist items against the amended spec — all still pass. No
+  [NEEDS CLARIFICATION] markers needed: the row-count options (10/25/50/infinite
+  scroll) and persistence behavior were fully specified by the user, and the
+  client-side-only architecture was inferred directly from how User Story 4 was
+  already implemented (verified by reading the existing dashboard template) rather
+  than left ambiguous.

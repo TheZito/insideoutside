@@ -14,7 +14,7 @@ independent implementation and testing of each story.
 ## Format: `[ID] [P?] [Story] Description`
 
 - **[P]**: Can run in parallel (different files, no dependencies on incomplete tasks)
-- **[Story]**: Which user story this task belongs to (US1, US2, US3)
+- **[Story]**: Which user story this task belongs to (US1, US2, US3, US4, US5)
 - File paths are relative to the repository root and match plan.md's Project Structure
 
 ## Path Conventions
@@ -236,6 +236,53 @@ reclassifying correctly dropped it from "notable"; lowering it back restored it.
 
 ---
 
+## Phase 9: User Story 5 - Control how many signals are shown at once (Priority: P5)
+
+**Goal**: Let the user choose a fixed page size (10/25/50) or infinite scroll for
+the dashboard's signal list, entirely client-side against rows already on the
+page (per spec.md Assumptions), interacting correctly with the existing US4
+sort/search state.
+
+**Independent Test**: Load a dashboard with more rows than the smallest page-size
+option, select each page-size option and confirm only that many rows are visible,
+switch to infinite scroll and confirm more rows appear on scroll, and reload to
+confirm the last-selected option persists.
+
+### Tests for User Story 5 (write FIRST, ensure they FAIL before implementation) ⚠️
+
+- [X] T073 [P] [US5] Contract test: dashboard HTML includes a page-size control
+  exposing the 10/25/50/infinite-scroll options (e.g. a `#page-size-select` with
+  those values) and every signal row remains present in the DOM (so client-side
+  paging has rows to work with), in `tests/contract/test_dashboard_page_size.py`
+
+### Implementation for User Story 5
+
+- [X] T074 [US5] Raise the row limit passed to `query_signals` in
+  `src/openinsider_tracker/web/routes/dashboard.py` from the default 100 to a
+  documented higher constant (e.g. 500) so page-size/infinite-scroll has enough
+  already-rendered rows at the project's actual data volume (per spec.md
+  Assumptions — no new query parameters, just a larger single fetch)
+- [X] T075 [US5] Add the page-size/infinite-scroll control markup (10/25/50/
+  Infinite options) to the dashboard toolbar in
+  `src/openinsider_tracker/web/templates/dashboard.html` (makes T073 pass)
+- [X] T076 [US5] Implement client-side page-size logic: show only the first N rows
+  of the current sorted/filtered row set (from US4's `applyFilter`/sort output),
+  re-applying whenever sort or search changes (FR-023), in
+  `src/openinsider_tracker/web/templates/dashboard.html` (depends on T071, T072,
+  T075)
+- [X] T077 [US5] Implement infinite-scroll mode: a scroll listener that reveals
+  the next batch of currently-hidden rows as the user nears the bottom of the
+  visible list, showing a "no more signals" indicator once exhausted (edge case
+  in spec.md), in `src/openinsider_tracker/web/templates/dashboard.html` (depends
+  on T076)
+- [X] T078 [US5] Persist the selected page-size/infinite-scroll option in
+  `localStorage` and restore it on page load (FR-022), in
+  `src/openinsider_tracker/web/templates/dashboard.html` (depends on T075)
+
+**Checkpoint**: All five user stories are independently functional.
+
+---
+
 ## Dependencies & Execution Order
 
 ### Phase Dependencies
@@ -247,6 +294,7 @@ reclassifying correctly dropped it from "notable"; lowering it back restored it.
 - **User Story 3 (Phase 5)**: Depends on Foundational; exercises the classification engine built in US1 (T044) via reclassification — independently testable via its own Independent Test
 - **Polish (Phase 6)**: Depends on all three user stories being complete (the scheduler wires together `ingest`/`classify`/`notify` from US1/US2, and quickstart validation exercises all three)
 - **User Story 4 (Phase 7)**: Depends on User Story 1's dashboard existing (it enhances that template); independent of US2/US3/Polish otherwise
+- **User Story 5 (Phase 9)**: Depends on User Story 1's dashboard and User Story 4's sort/search JS existing (page-size re-slices US4's sorted/filtered output); independent of US2/US3/Polish otherwise
 
 ### Within Each Phase
 
@@ -262,6 +310,7 @@ reclassifying correctly dropped it from "notable"; lowering it back restored it.
 - US2 tests: T050-T052 in parallel
 - US3 tests: T057-T059 in parallel
 - Polish: T064, T066, T067, T068 in parallel
+- US5: T073 can run alongside T074 (different files)
 
 ---
 

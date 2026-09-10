@@ -12,6 +12,19 @@
       border: 1px solid #2a3441; background: #12181f; color: #e6edf3;
     }
     .toolbar .count { color: #9fb0c0; font-size: 0.85rem; }
+    .toolbar select {
+      padding: 0.4rem 0.6rem; border-radius: 6px; border: 1px solid #2a3441;
+      background: #12181f; color: #e6edf3;
+    }
+    .toolbar label { color: #9fb0c0; font-size: 0.85rem; display: flex; align-items: center; gap: 0.4rem; }
+    .pagination { margin-top: 1rem; display: flex; gap: 0.75rem; align-items: center; }
+    .pagination button {
+      padding: 0.3rem 0.75rem; border-radius: 6px; border: 1px solid #2a3441;
+      background: #12181f; color: #e6edf3; cursor: pointer;
+    }
+    .pagination button:disabled { opacity: 0.4; cursor: default; }
+    .pagination .page-indicator { color: #9fb0c0; font-size: 0.85rem; }
+    .end-of-list { margin-top: 1rem; text-align: center; color: #9fb0c0; font-size: 0.85rem; }
     table { border-collapse: collapse; width: 100%; margin-top: 1rem; }
     th, td { text-align: left; padding: 0.5rem 0.75rem; border-bottom: 1px solid #2a3441; }
     th { color: #9fb0c0; font-weight: 600; }
@@ -33,6 +46,14 @@
 
   <div class="toolbar">
     <input type="search" id="search-box" placeholder="Search company, ticker, or details…">
+    <label for="page-size-select">Rows
+      <select id="page-size-select">
+        <option value="10">10</option>
+        <option value="25" selected>25</option>
+        <option value="50">50</option>
+        <option value="infinite">Infinite scroll</option>
+      </select>
+    </label>
     <span class="count"><span id="visible-count">{{ total }}</span> shown</span>
   </div>
 
@@ -84,6 +105,13 @@
     </tbody>
   </table>
 
+  <div class="pagination" id="pagination-controls">
+    <button type="button" id="prev-page">&larr; Prev</button>
+    <span class="page-indicator" id="page-indicator"></span>
+    <button type="button" id="next-page">Next &rarr;</button>
+  </div>
+  <div class="end-of-list" id="end-of-list" hidden>No more signals.</div>
+
   <script>
     (function () {
       var table = document.getElementById("signals-table");
@@ -91,10 +119,60 @@
       var searchBox = document.getElementById("search-box");
       var visibleCount = document.getElementById("visible-count");
       var headers = table.querySelectorAll("th.sortable");
+      var pageSizeSelect = document.getElementById("page-size-select");
+      var paginationControls = document.getElementById("pagination-controls");
+      var prevButton = document.getElementById("prev-page");
+      var nextButton = document.getElementById("next-page");
+      var pageIndicator = document.getElementById("page-indicator");
+      var endOfList = document.getElementById("end-of-list");
       var currentSort = { key: "date", direction: "desc" };
+      var INFINITE_BATCH = 25;
+      var PAGE_SIZE_STORAGE_KEY = "openinsider-dashboard-page-size";
+      var pageSize = "25";
+      var currentPage = 1;
+      var infiniteRevealCount = INFINITE_BATCH;
 
       function getRows() {
         return Array.prototype.slice.call(tbody.querySelectorAll("tr[data-search]"));
+      }
+
+      function getMatchingRows() {
+        var query = searchBox.value.trim().toLowerCase();
+        return getRows().filter(function (row) {
+          return !query || row.dataset.search.indexOf(query) !== -1;
+        });
+      }
+
+      function resetPaging() {
+        currentPage = 1;
+        infiniteRevealCount = INFINITE_BATCH;
+      }
+
+      function render() {
+        var matching = getMatchingRows();
+        visibleCount.textContent = matching.length;
+
+        getRows().forEach(function (row) { row.classList.add("hidden"); });
+
+        var toShow;
+        if (pageSize === "infinite") {
+          paginationControls.hidden = true;
+          toShow = matching.slice(0, infiniteRevealCount);
+          endOfList.hidden = matching.length === 0 || infiniteRevealCount < matching.length;
+        } else {
+          paginationControls.hidden = false;
+          endOfList.hidden = true;
+          var size = parseInt(pageSize, 10);
+          var totalPages = Math.max(1, Math.ceil(matching.length / size));
+          currentPage = Math.min(Math.max(currentPage, 1), totalPages);
+          var start = (currentPage - 1) * size;
+          toShow = matching.slice(start, start + size);
+          pageIndicator.textContent = "Page " + currentPage + " of " + totalPages;
+          prevButton.disabled = currentPage <= 1;
+          nextButton.disabled = currentPage >= totalPages;
+        }
+
+        toShow.forEach(function (row) { row.classList.remove("hidden"); });
       }
 
       function applySort() {
@@ -124,17 +202,6 @@
         });
       }
 
-      function applyFilter() {
-        var query = searchBox.value.trim().toLowerCase();
-        var shown = 0;
-        getRows().forEach(function (row) {
-          var matches = !query || row.dataset.search.indexOf(query) !== -1;
-          row.classList.toggle("hidden", !matches);
-          if (matches) shown += 1;
-        });
-        visibleCount.textContent = shown;
-      }
-
       headers.forEach(function (header) {
         header.addEventListener("click", function () {
           var key = header.dataset.key;
@@ -144,12 +211,59 @@
             currentSort = { key: key, direction: "asc" };
           }
           applySort();
+          resetPaging();
+          render();
         });
       });
 
-      searchBox.addEventListener("input", applyFilter);
+      searchBox.addEventListener("input", function () {
+        resetPaging();
+        render();
+      });
+
+      pageSizeSelect.addEventListener("change", function () {
+        pageSize = pageSizeSelect.value;
+        resetPaging();
+        render();
+        try {
+          localStorage.setItem(PAGE_SIZE_STORAGE_KEY, pageSize);
+        } catch (err) {
+          // localStorage unavailable (private browsing, etc.) -- preference just won't persist.
+        }
+      });
+
+      prevButton.addEventListener("click", function () {
+        currentPage -= 1;
+        render();
+      });
+
+      nextButton.addEventListener("click", function () {
+        currentPage += 1;
+        render();
+      });
+
+      window.addEventListener("scroll", function () {
+        if (pageSize !== "infinite") return;
+        var nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 200;
+        if (!nearBottom) return;
+        var matchingCount = getMatchingRows().length;
+        if (infiniteRevealCount >= matchingCount) return;
+        infiniteRevealCount += INFINITE_BATCH;
+        render();
+      });
+
+      try {
+        var storedPageSize = localStorage.getItem(PAGE_SIZE_STORAGE_KEY);
+        if (storedPageSize && pageSizeSelect.querySelector('option[value="' + storedPageSize + '"]')) {
+          pageSize = storedPageSize;
+          pageSizeSelect.value = storedPageSize;
+        }
+      } catch (err) {
+        // localStorage unavailable -- fall back to the default page size.
+      }
 
       applySort();
+      render();
     })();
   </script>
 </body>
