@@ -6,7 +6,7 @@
 
 ## Summary
 
-Extend the existing `openinsider_tracker` codebase (specs/001-insider-buyback-tracker)
+Extend the existing `insideoutside` codebase (specs/001-insider-buyback-tracker)
 with a third signal type: a **cluster buy**, detected when two or more distinct
 insiders at the same company each make a discretionary open-market buy within a
 rolling window (default 14 days). Detection runs as an added step inside the
@@ -77,7 +77,7 @@ specs/002-cluster-buying-detection/
 ### Source Code (repository root — additions/changes to the existing 001 tree)
 
 ```text
-src/openinsider_tracker/
+src/insideoutside/
 ├── domain/
 │   ├── insider_transaction.py    # + optional filer_id field
 │   ├── signal.py                 # + "cluster_buy" signal_type, cluster_buy_event_id

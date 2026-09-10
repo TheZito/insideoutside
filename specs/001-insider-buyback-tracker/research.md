@@ -90,7 +90,7 @@ cron-style interval configurable via an environment variable.
 **Rationale**: Keeps scheduling logic inside the one app process (no separate worker
 container, no external scheduler service) while still going through the same
 library entry points the CLI uses, so the scheduled path and a manual/debug
-invocation (`docker compose exec app python -m openinsider_tracker ingest`) run
+invocation (`docker compose exec app python -m insideoutside ingest`) run
 identical code — supporting Constitution Principle IV without a second container.
 An earlier draft of this plan put the scheduler in a dedicated `worker` container;
 that was reversed after review because nothing in this feature needs independent

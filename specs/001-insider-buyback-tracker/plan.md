@@ -62,7 +62,7 @@ historical retention with no anticipated performance concern at this scale
 | I. Test-First (NON-NEGOTIABLE) | tasks.md (next phase) will sequence a failing test before each implementation task for ingestion, classification, notification, and API/CLI behavior | PASS (enforced at task-generation, not architecture) |
 | II. Data Accuracy & Source Integrity | data-model.md defines provenance fields (source, source reference, fetched_at) on every ingested record; parse/validation failures raise rather than silently coerce (Pydantic models, no default-on-error) | PASS |
 | III. Simplicity & YAGNI | Single Python codebase, a single container — the dashboard, the scheduled ingest/classify/notify loop, and storage (SQLite, in-process) all run together, since there is no independent-scaling, process-isolation, or multi-writer need for a single-user tool. Two earlier drafts of this plan (a separate worker service, then a separate Postgres service) were dropped once neither was backed by a measured, current need — see research.md §5/§8 for the reasoning trail. |
-| IV. CLI-First & Library-First Architecture | Ingestion, classification, and notification are implemented in `src/openinsider_tracker/` as a library with CLI subcommands (`ingest`, `classify`, `notify`); both the FastAPI app and its internal scheduler call this library rather than duplicating logic, and the same commands are runnable manually via `docker compose exec app ...` | PASS |
+| IV. CLI-First & Library-First Architecture | Ingestion, classification, and notification are implemented in `src/insideoutside/` as a library with CLI subcommands (`ingest`, `classify`, `notify`); both the FastAPI app and its internal scheduler call this library rather than duplicating logic, and the same commands are runnable manually via `docker compose exec app ...` | PASS |
 | V. Financial Safety & Human Oversight for Automated Trading | Not applicable — this feature has no trade-execution capability (spec FR-017); no brokerage credentials or order logic exist in this plan | PASS (N/A, explicitly excluded) |
 | Containerized Deployment | `docker-compose.yml` defines a single `app` service with a named volume for the SQLite file; no host-installed dependency required to build/run/test | PASS |
 | Data Handling & Compliance Standards | Research (Phase 0) documents rate-limit/backoff approach per source; SMTP credentials supplied via env file, not committed | PASS |
@@ -96,7 +96,7 @@ specs/001-insider-buyback-tracker/
 
 ```text
 src/
-└── openinsider_tracker/
+└── insideoutside/
     ├── domain/            # Entities: InsiderTransaction, BuybackEvent, Signal, ThresholdConfig
     ├── ingestion/         # SEC EDGAR Form 4 client, EDGAR full-text (buyback) client,
     │                      # OpenInsider-style client, shared retry/backoff + de-dup logic
@@ -108,7 +108,7 @@ src/
     │                      # automatically at startup
     ├── scheduler/         # APScheduler setup: runs ingest/classify/notify on an interval
     │                      # inside the app process's background thread
-    ├── cli/               # `python -m openinsider_tracker` subcommands: ingest, classify,
+    ├── cli/               # `python -m insideoutside` subcommands: ingest, classify,
     │                      # notify, serve (starts the FastAPI app + scheduler)
     └── web/               # FastAPI app: JSON API + Jinja2 dashboard templates (reads only)
 

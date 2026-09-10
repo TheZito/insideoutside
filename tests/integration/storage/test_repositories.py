@@ -3,16 +3,16 @@ from decimal import Decimal
 
 import pytest
 
-from openinsider_tracker.domain.buyback_event import BuybackEvent
-from openinsider_tracker.domain.insider_transaction import InsiderTransaction
-from openinsider_tracker.domain.threshold_configuration import ThresholdConfiguration
-from openinsider_tracker.storage.db import Database
-from openinsider_tracker.storage.migrations import apply_migrations
-from openinsider_tracker.storage.repositories.buyback_repo import BuybackEventRepository
-from openinsider_tracker.storage.repositories.insider_transaction_repo import (
+from insideoutside.domain.buyback_event import BuybackEvent
+from insideoutside.domain.insider_transaction import InsiderTransaction
+from insideoutside.domain.threshold_configuration import ThresholdConfiguration
+from insideoutside.storage.db import Database
+from insideoutside.storage.migrations import apply_migrations
+from insideoutside.storage.repositories.buyback_repo import BuybackEventRepository
+from insideoutside.storage.repositories.insider_transaction_repo import (
     InsiderTransactionRepository,
 )
-from openinsider_tracker.storage.repositories.threshold_repo import (
+from insideoutside.storage.repositories.threshold_repo import (
     ThresholdConfigurationRepository,
 )
 

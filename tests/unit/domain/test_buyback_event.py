@@ -4,7 +4,7 @@ from decimal import Decimal
 import pytest
 from pydantic import ValidationError
 
-from openinsider_tracker.domain.buyback_event import BuybackEvent
+from insideoutside.domain.buyback_event import BuybackEvent
 
 
 def _valid_kwargs(**overrides):

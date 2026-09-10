@@ -15,7 +15,7 @@ RUN pip install --no-cache-dir .
 
 RUN mkdir -p /data
 
-ENV DB_PATH=/data/openinsider_tracker.db \
+ENV DB_PATH=/data/insideoutside.db \
     HOST=0.0.0.0 \
     PORT=8000
 
@@ -23,4 +23,4 @@ EXPOSE 8000
 
 # migrate is an explicit step per contracts/cli.md; run it once at container start
 # (idempotent) so a fresh volume gets its schema before serve starts.
-CMD ["sh", "-c", "python -m openinsider_tracker migrate && python -m openinsider_tracker serve"]
+CMD ["sh", "-c", "python -m insideoutside migrate && python -m insideoutside serve"]

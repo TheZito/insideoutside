@@ -14,7 +14,7 @@ Sync Impact Report
   Context MUST reflect this containerization requirement.
 -->
 
-# OpenInsider Tracker Constitution
+# insideoutside Constitution
 
 ## Core Principles
 

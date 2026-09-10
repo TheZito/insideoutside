@@ -7,7 +7,7 @@ first-time setup). No new services, no new env vars required.
 ## Prerequisites
 
 - 001's stack already up and migrated (`docker compose up -d`, then
-  `docker compose exec app python -m openinsider_tracker migrate` to pick up
+  `docker compose exec app python -m insideoutside migrate` to pick up
   this feature's schema changes too).
 
 ## Validate User Story 1 — cluster signal appears on the dashboard
@@ -16,9 +16,9 @@ first-time setup). No new services, no new env vars required.
    the default 14-day window, at least one below the existing single-transaction
    threshold:
    ```bash
-   docker compose exec app python -m openinsider_tracker ingest --source sec_edgar --fixture tests/fixtures/sample_form4_cluster_filer_a.xml
-   docker compose exec app python -m openinsider_tracker ingest --source sec_edgar --fixture tests/fixtures/sample_form4_cluster_filer_b.xml
-   docker compose exec app python -m openinsider_tracker classify
+   docker compose exec app python -m insideoutside ingest --source sec_edgar --fixture tests/fixtures/sample_form4_cluster_filer_a.xml
+   docker compose exec app python -m insideoutside ingest --source sec_edgar --fixture tests/fixtures/sample_form4_cluster_filer_b.xml
+   docker compose exec app python -m insideoutside classify
    ```
 2. `curl http://localhost:8000/api/signals?signal_type=cluster_buy`
 3. **Expected**: one `cluster_buy` signal, `distinct_filer_count: 2`, combined
@@ -28,7 +28,7 @@ first-time setup). No new services, no new env vars required.
 ## Validate User Story 2 — email on new cluster signal
 
 ```bash
-docker compose exec app python -m openinsider_tracker notify
+docker compose exec app python -m insideoutside notify
 ```
 
 **Expected**: one email identifying the company, distinct filer count, and
@@ -39,8 +39,8 @@ now 3) but sends no second email for it (FR-007/SC-002).
 ## Validate User Story 3 — tune sensitivity
 
 ```bash
-docker compose exec app python -m openinsider_tracker thresholds set --min-cluster-filer-count 3
-docker compose exec app python -m openinsider_tracker classify --reclassify
+docker compose exec app python -m insideoutside thresholds set --min-cluster-filer-count 3
+docker compose exec app python -m insideoutside classify --reclassify
 ```
 
 **Expected**: with only 2 distinct filers in the fixture data, the cluster from

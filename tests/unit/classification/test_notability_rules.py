@@ -1,10 +1,10 @@
 from datetime import date, datetime
 from decimal import Decimal
 
-from openinsider_tracker.classification.rules import classify_buyback, classify_insider_transaction
-from openinsider_tracker.domain.buyback_event import BuybackEvent
-from openinsider_tracker.domain.insider_transaction import InsiderTransaction
-from openinsider_tracker.domain.threshold_configuration import ThresholdConfiguration
+from insideoutside.classification.rules import classify_buyback, classify_insider_transaction
+from insideoutside.domain.buyback_event import BuybackEvent
+from insideoutside.domain.insider_transaction import InsiderTransaction
+from insideoutside.domain.threshold_configuration import ThresholdConfiguration
 
 
 def _txn(**overrides):

@@ -1,9 +1,9 @@
 import pytest
 from fastapi.testclient import TestClient
 
-from openinsider_tracker.storage.db import Database
-from openinsider_tracker.storage.migrations import apply_migrations
-from openinsider_tracker.web.app import create_app
+from insideoutside.storage.db import Database
+from insideoutside.storage.migrations import apply_migrations
+from insideoutside.web.app import create_app
 
 
 @pytest.fixture

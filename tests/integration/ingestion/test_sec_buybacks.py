@@ -2,7 +2,7 @@ from datetime import date, datetime
 from decimal import Decimal
 from pathlib import Path
 
-from openinsider_tracker.ingestion.sec_buybacks import parse_buyback_disclosure_html
+from insideoutside.ingestion.sec_buybacks import parse_buyback_disclosure_html
 
 FIXTURES = Path(__file__).parent.parent.parent / "fixtures"
 

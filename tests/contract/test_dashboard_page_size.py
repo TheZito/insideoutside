@@ -4,10 +4,10 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 
-from openinsider_tracker.cli.main import main
-from openinsider_tracker.storage.db import Database
-from openinsider_tracker.storage.migrations import apply_migrations
-from openinsider_tracker.web.app import create_app
+from insideoutside.cli.main import main
+from insideoutside.storage.db import Database
+from insideoutside.storage.migrations import apply_migrations
+from insideoutside.web.app import create_app
 
 FIXTURES = Path(__file__).parent.parent / "fixtures"
 

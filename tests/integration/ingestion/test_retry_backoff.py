@@ -1,7 +1,7 @@
 import httpx
 import pytest
 
-from openinsider_tracker.ingestion.http_client import FetchError, fetch_with_retry
+from insideoutside.ingestion.http_client import FetchError, fetch_with_retry
 
 
 def test_transient_failure_is_retried_then_succeeds():

@@ -2,9 +2,9 @@ from pathlib import Path
 
 import pytest
 
-from openinsider_tracker.cli.main import main
-from openinsider_tracker.storage.db import Database
-from openinsider_tracker.web.routes.signals import query_signals
+from insideoutside.cli.main import main
+from insideoutside.storage.db import Database
+from insideoutside.web.routes.signals import query_signals
 
 FIXTURES = Path(__file__).parent.parent.parent / "fixtures"
 

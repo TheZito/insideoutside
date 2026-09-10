@@ -15,7 +15,7 @@ purely additive to the existing 001 codebase — no new project, no new service.
 - **[P]**: Can run in parallel (different files, no dependencies on incomplete tasks)
 - **[Story]**: US1, US2, US3 (from spec.md)
 - All file paths are relative to the repository root, inside the existing
-  `src/openinsider_tracker/` and `tests/` trees from 001.
+  `src/insideoutside/` and `tests/` trees from 001.
 
 ---
 
@@ -42,16 +42,16 @@ purely additive to the existing 001 codebase — no new project, no new service.
 
 ### Implementation for Foundational
 
-- [X] T008 [P] Add optional `filer_id` field to `InsiderTransaction` in `src/openinsider_tracker/domain/insider_transaction.py` (makes T002 pass)
-- [X] T009 [P] Implement `ClusterBuyEvent` domain model in `src/openinsider_tracker/domain/cluster_buy_event.py` (makes T003 pass)
-- [X] T010 Extend `Signal` domain model — add `cluster_buy` to `SignalType`, add `cluster_buy_event_id`, extend `_check_signal_type_linkage` — in `src/openinsider_tracker/domain/signal.py` (makes T004 pass)
-- [X] T011 [P] Extend `ThresholdConfiguration` — add `cluster_window_days` (default 14) and `min_cluster_filer_count` (default 2) with validators — in `src/openinsider_tracker/domain/threshold_configuration.py` (makes T005 pass)
-- [X] T012 Update `parse_form4_xml` to read `rptOwnerCik` into `filer_id`, in `src/openinsider_tracker/ingestion/sec_edgar_form4.py` (depends on T008; makes T007 pass)
-- [X] T013 Extend `src/openinsider_tracker/storage/orm.py`: `InsiderTransactionORM.filer_id`, new `ClusterBuyEventORM` table, `SignalORM.cluster_buy_event_id`, `ThresholdConfigurationORM.cluster_window_days`/`min_cluster_filer_count` (depends on T008-T011)
-- [X] T014 Write Alembic migration `0003_cluster_buying.py` covering all of T013's schema changes, with `server_default`s so existing rows backfill correctly, in `src/openinsider_tracker/storage/migrations/versions/` (depends on T013; makes T006 pass together with T015)
-- [X] T015 [P] Implement `ClusterBuyEventRepository` — `create`/`get`/`list_by_company`, and `upsert_by_overlapping_transactions(candidate)` which matches an existing row by shared `contributing_transaction_ids` (NOT by company alone — a company can have multiple unrelated clusters over time, per research.md §5) and replaces it in place, or creates a new row if nothing matches — in `src/openinsider_tracker/storage/repositories/cluster_buy_repo.py` (depends on T014; makes T006 pass)
-- [X] T016 Update `SignalRepository`: add `get_for_cluster_buy_event`, thread `cluster_buy_event_id` through `_to_domain`/`_apply_domain`, in `src/openinsider_tracker/storage/repositories/signal_repo.py` (depends on T010, T014)
-- [X] T017 Update `ThresholdConfigurationRepository` to persist/read the two new fields, in `src/openinsider_tracker/storage/repositories/threshold_repo.py` (depends on T011, T014)
+- [X] T008 [P] Add optional `filer_id` field to `InsiderTransaction` in `src/insideoutside/domain/insider_transaction.py` (makes T002 pass)
+- [X] T009 [P] Implement `ClusterBuyEvent` domain model in `src/insideoutside/domain/cluster_buy_event.py` (makes T003 pass)
+- [X] T010 Extend `Signal` domain model — add `cluster_buy` to `SignalType`, add `cluster_buy_event_id`, extend `_check_signal_type_linkage` — in `src/insideoutside/domain/signal.py` (makes T004 pass)
+- [X] T011 [P] Extend `ThresholdConfiguration` — add `cluster_window_days` (default 14) and `min_cluster_filer_count` (default 2) with validators — in `src/insideoutside/domain/threshold_configuration.py` (makes T005 pass)
+- [X] T012 Update `parse_form4_xml` to read `rptOwnerCik` into `filer_id`, in `src/insideoutside/ingestion/sec_edgar_form4.py` (depends on T008; makes T007 pass)
+- [X] T013 Extend `src/insideoutside/storage/orm.py`: `InsiderTransactionORM.filer_id`, new `ClusterBuyEventORM` table, `SignalORM.cluster_buy_event_id`, `ThresholdConfigurationORM.cluster_window_days`/`min_cluster_filer_count` (depends on T008-T011)
+- [X] T014 Write Alembic migration `0003_cluster_buying.py` covering all of T013's schema changes, with `server_default`s so existing rows backfill correctly, in `src/insideoutside/storage/migrations/versions/` (depends on T013; makes T006 pass together with T015)
+- [X] T015 [P] Implement `ClusterBuyEventRepository` — `create`/`get`/`list_by_company`, and `upsert_by_overlapping_transactions(candidate)` which matches an existing row by shared `contributing_transaction_ids` (NOT by company alone — a company can have multiple unrelated clusters over time, per research.md §5) and replaces it in place, or creates a new row if nothing matches — in `src/insideoutside/storage/repositories/cluster_buy_repo.py` (depends on T014; makes T006 pass)
+- [X] T016 Update `SignalRepository`: add `get_for_cluster_buy_event`, thread `cluster_buy_event_id` through `_to_domain`/`_apply_domain`, in `src/insideoutside/storage/repositories/signal_repo.py` (depends on T010, T014)
+- [X] T017 Update `ThresholdConfigurationRepository` to persist/read the two new fields, in `src/insideoutside/storage/repositories/threshold_repo.py` (depends on T011, T014)
 
 **Checkpoint**: Foundation ready — user story implementation can now begin.
 
@@ -78,10 +78,10 @@ and the dashboard with the correct filer count, window, and combined value.
 
 ### Implementation for User Story 1
 
-- [X] T024 [US1] Implement the grouping algorithm (`detect_clusters`) and `classify_cluster` in `src/openinsider_tracker/classification/cluster_buying.py` (depends on T008, T011; makes T018, T019 pass)
-- [X] T025 [US1] Wire cluster detection into the `classify` CLI command — after existing per-record classification, group qualifying transactions per company, upsert `ClusterBuyEvent`s via T015's `upsert_by_overlapping_transactions`, create/update `Signal` rows via T016 — in `src/openinsider_tracker/cli/commands/classify.py` (depends on T015, T016, T024; makes T020, T021, T022 pass)
-- [X] T026 [US1] Add the `cluster_buy` branch to the signal-summary dispatcher (company/ticker/summary/amount/event_date/`source_url: null`) in `src/openinsider_tracker/web/routes/signals.py` (depends on T015; makes T023 pass)
-- [X] T027 [US1] Add cluster-buy badge styling to the dashboard template, in `src/openinsider_tracker/web/templates/dashboard.html` (depends on T026)
+- [X] T024 [US1] Implement the grouping algorithm (`detect_clusters`) and `classify_cluster` in `src/insideoutside/classification/cluster_buying.py` (depends on T008, T011; makes T018, T019 pass)
+- [X] T025 [US1] Wire cluster detection into the `classify` CLI command — after existing per-record classification, group qualifying transactions per company, upsert `ClusterBuyEvent`s via T015's `upsert_by_overlapping_transactions`, create/update `Signal` rows via T016 — in `src/insideoutside/cli/commands/classify.py` (depends on T015, T016, T024; makes T020, T021, T022 pass)
+- [X] T026 [US1] Add the `cluster_buy` branch to the signal-summary dispatcher (company/ticker/summary/amount/event_date/`source_url: null`) in `src/insideoutside/web/routes/signals.py` (depends on T015; makes T023 pass)
+- [X] T027 [US1] Add cluster-buy badge styling to the dashboard template, in `src/insideoutside/web/templates/dashboard.html` (depends on T026)
 
 **Checkpoint**: User Story 1 fully functional and independently testable.
 
@@ -103,8 +103,8 @@ email is sent.
 
 ### Implementation for User Story 2
 
-- [X] T030 [US2] Add the `cluster_buy` branch to `compose_signal_email` in `src/openinsider_tracker/notifications/composer.py` (depends on T015; makes T028 pass)
-- [X] T031 [US2] Ensure cluster recomputation (T025) never resets an already-`sent`/`failed` Signal's `notification_status` back to `pending` when its `ClusterBuyEvent` is updated, in `src/openinsider_tracker/cli/commands/classify.py` (depends on T025; makes T029 pass)
+- [X] T030 [US2] Add the `cluster_buy` branch to `compose_signal_email` in `src/insideoutside/notifications/composer.py` (depends on T015; makes T028 pass)
+- [X] T031 [US2] Ensure cluster recomputation (T025) never resets an already-`sent`/`failed` Signal's `notification_status` back to `pending` when its `ClusterBuyEvent` is updated, in `src/insideoutside/cli/commands/classify.py` (depends on T025; makes T029 pass)
 
 **Checkpoint**: User Stories 1 and 2 both work independently.
 
@@ -126,9 +126,9 @@ notable cluster's status changes accordingly on the next classification run.
 
 ### Implementation for User Story 3
 
-- [X] T035 [US3] Add `cluster_window_days`/`min_cluster_filer_count` to the thresholds request/response models in `src/openinsider_tracker/web/routes/thresholds.py` (depends on T017; makes T032 pass)
-- [X] T036 [US3] Add `--cluster-window-days`/`--min-cluster-filer-count` flags to `thresholds set` in `src/openinsider_tracker/cli/commands/thresholds.py` and `src/openinsider_tracker/cli/main.py` (depends on T017; makes T033 pass)
-- [X] T037 [US3] Ensure `classify --reclassify` re-runs cluster detection from scratch across all companies with qualifying transactions, not just per-record classification, using T015's overlap-matching upsert so a split/merge resolves against existing rows correctly (research.md §5), in `src/openinsider_tracker/cli/commands/classify.py` (depends on T025; makes T034, T034a pass)
+- [X] T035 [US3] Add `cluster_window_days`/`min_cluster_filer_count` to the thresholds request/response models in `src/insideoutside/web/routes/thresholds.py` (depends on T017; makes T032 pass)
+- [X] T036 [US3] Add `--cluster-window-days`/`--min-cluster-filer-count` flags to `thresholds set` in `src/insideoutside/cli/commands/thresholds.py` and `src/insideoutside/cli/main.py` (depends on T017; makes T033 pass)
+- [X] T037 [US3] Ensure `classify --reclassify` re-runs cluster detection from scratch across all companies with qualifying transactions, not just per-record classification, using T015's overlap-matching upsert so a split/merge resolves against existing rows correctly (research.md §5), in `src/insideoutside/cli/commands/classify.py` (depends on T025; makes T034, T034a pass)
 
 **Checkpoint**: All three user stories independently functional.
 
@@ -138,7 +138,7 @@ notable cluster's status changes accordingly on the next classification run.
 
 - [X] T038 [P] Run 001's full existing test suite unmodified and confirm zero regressions (SC-003) — no changes to buyback detection, single-transaction classification, or their dashboard/email behavior
 - [X] T039 Rebuild the Docker image, run `migrate` against the existing volume (verifying the new columns/table backfill correctly on real pre-existing data, not just a fresh database), and validate quickstart.md's three user-story scenarios live against the running container
-- [X] T040 [P] Add structured logging distinguishing a newly-created cluster vs. an updated one vs. one newly crossing notability, in `src/openinsider_tracker/cli/commands/classify.py` (Constitution Principle II)
+- [X] T040 [P] Add structured logging distinguishing a newly-created cluster vs. an updated one vs. one newly crossing notability, in `src/insideoutside/cli/commands/classify.py` (Constitution Principle II)
 
 ---
 

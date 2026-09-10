@@ -20,7 +20,7 @@ independent implementation and testing of each story.
 ## Path Conventions
 
 Single Python project, single deployable service (per plan.md):
-`src/openinsider_tracker/{domain,ingestion,classification,notifications,storage,scheduler,cli,web}`,
+`src/insideoutside/{domain,ingestion,classification,notifications,storage,scheduler,cli,web}`,
 `tests/{unit,integration,contract,fixtures}`, root `Dockerfile` + `docker-compose.yml`.
 
 ---
@@ -29,7 +29,7 @@ Single Python project, single deployable service (per plan.md):
 
 **Purpose**: Project initialization and basic structure
 
-- [X] T001 Create project directory structure per plan.md: `src/openinsider_tracker/{domain,ingestion,classification,notifications,storage/repositories,scheduler,cli,web/routes,web/templates}`, `tests/{unit/domain,unit/classification,integration/ingestion,integration/storage,integration/notifications,integration/classification,contract,fixtures}`
+- [X] T001 Create project directory structure per plan.md: `src/insideoutside/{domain,ingestion,classification,notifications,storage/repositories,scheduler,cli,web/routes,web/templates}`, `tests/{unit/domain,unit/classification,integration/ingestion,integration/storage,integration/notifications,integration/classification,contract,fixtures}`
 - [X] T002 Initialize Python project in `pyproject.toml` with dependencies: fastapi, uvicorn, sqlalchemy, alembic, httpx, apscheduler, pydantic, jinja2, pytest, pytest-asyncio
 - [X] T003 [P] Configure ruff lint/format rules in `pyproject.toml`
 - [X] T004 [P] Create `.env.example` documenting `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `NOTIFY_EMAIL_TO`, `DB_PATH`, `POLL_INTERVAL_MINUTES`
@@ -52,21 +52,21 @@ Single Python project, single deployable service (per plan.md):
 
 ### Implementation for Foundational
 
-- [X] T010 [P] Implement `InsiderTransaction` domain model in `src/openinsider_tracker/domain/insider_transaction.py` (makes T005 pass)
-- [X] T011 [P] Implement `BuybackEvent` domain model in `src/openinsider_tracker/domain/buyback_event.py` (makes T006 pass)
-- [X] T012 [P] Implement `Signal` domain model in `src/openinsider_tracker/domain/signal.py` (makes T007 pass)
-- [X] T013 [P] Implement `ThresholdConfiguration` domain model with defaults in `src/openinsider_tracker/domain/threshold_configuration.py` (makes T008 pass)
-- [X] T014 Implement SQLAlchemy engine/session/Base setup (SQLite file path from config) in `src/openinsider_tracker/storage/db.py`
-- [X] T015 Implement SQLAlchemy ORM models for all four entities in `src/openinsider_tracker/storage/orm.py` (depends on T010-T014)
-- [X] T016 Set up the Alembic migration environment and the initial schema migration (exposing a callable `apply_migrations()` for the CLI to wire up next) in `src/openinsider_tracker/storage/migrations/` (depends on T015)
-- [X] T017 [P] Implement `InsiderTransactionRepository` in `src/openinsider_tracker/storage/repositories/insider_transaction_repo.py` (depends on T015)
-- [X] T018 [P] Implement `BuybackEventRepository` in `src/openinsider_tracker/storage/repositories/buyback_repo.py` (depends on T015)
-- [X] T019 [P] Implement `SignalRepository` in `src/openinsider_tracker/storage/repositories/signal_repo.py` (depends on T015)
-- [X] T020 [P] Implement `ThresholdConfigurationRepository` (singleton get/set) in `src/openinsider_tracker/storage/repositories/threshold_repo.py` (depends on T015; T017-T020 together make T009 pass)
-- [X] T021 [P] Implement shared retry/backoff HTTP client helper in `src/openinsider_tracker/ingestion/http_client.py`
-- [X] T022 Implement application config loader (env vars for DB path, SMTP, poll interval, notify-to address) in `src/openinsider_tracker/config.py`
-- [X] T023 Implement CLI scaffold wiring `migrate|ingest|classify|notify|serve|thresholds` subcommands in `src/openinsider_tracker/cli/main.py` and `src/openinsider_tracker/__main__.py`: `migrate` is fully implemented here (calling T016's `apply_migrations()`, per contracts/cli.md), the rest are stubs completed in their own story phases (depends on T016, T022; makes T009's setup path work)
-- [X] T024 Implement FastAPI app factory plus `GET /healthz` (verifies DB connectivity) in `src/openinsider_tracker/web/app.py` (depends on T014, T022)
+- [X] T010 [P] Implement `InsiderTransaction` domain model in `src/insideoutside/domain/insider_transaction.py` (makes T005 pass)
+- [X] T011 [P] Implement `BuybackEvent` domain model in `src/insideoutside/domain/buyback_event.py` (makes T006 pass)
+- [X] T012 [P] Implement `Signal` domain model in `src/insideoutside/domain/signal.py` (makes T007 pass)
+- [X] T013 [P] Implement `ThresholdConfiguration` domain model with defaults in `src/insideoutside/domain/threshold_configuration.py` (makes T008 pass)
+- [X] T014 Implement SQLAlchemy engine/session/Base setup (SQLite file path from config) in `src/insideoutside/storage/db.py`
+- [X] T015 Implement SQLAlchemy ORM models for all four entities in `src/insideoutside/storage/orm.py` (depends on T010-T014)
+- [X] T016 Set up the Alembic migration environment and the initial schema migration (exposing a callable `apply_migrations()` for the CLI to wire up next) in `src/insideoutside/storage/migrations/` (depends on T015)
+- [X] T017 [P] Implement `InsiderTransactionRepository` in `src/insideoutside/storage/repositories/insider_transaction_repo.py` (depends on T015)
+- [X] T018 [P] Implement `BuybackEventRepository` in `src/insideoutside/storage/repositories/buyback_repo.py` (depends on T015)
+- [X] T019 [P] Implement `SignalRepository` in `src/insideoutside/storage/repositories/signal_repo.py` (depends on T015)
+- [X] T020 [P] Implement `ThresholdConfigurationRepository` (singleton get/set) in `src/insideoutside/storage/repositories/threshold_repo.py` (depends on T015; T017-T020 together make T009 pass)
+- [X] T021 [P] Implement shared retry/backoff HTTP client helper in `src/insideoutside/ingestion/http_client.py`
+- [X] T022 Implement application config loader (env vars for DB path, SMTP, poll interval, notify-to address) in `src/insideoutside/config.py`
+- [X] T023 Implement CLI scaffold wiring `migrate|ingest|classify|notify|serve|thresholds` subcommands in `src/insideoutside/cli/main.py` and `src/insideoutside/__main__.py`: `migrate` is fully implemented here (calling T016's `apply_migrations()`, per contracts/cli.md), the rest are stubs completed in their own story phases (depends on T016, T022; makes T009's setup path work)
+- [X] T024 Implement FastAPI app factory plus `GET /healthz` (verifies DB connectivity) in `src/insideoutside/web/app.py` (depends on T014, T022)
 
 **Checkpoint**: Foundation ready — user story implementation can now begin.
 
@@ -100,19 +100,19 @@ no notification system required.
 
 ### Implementation for User Story 1
 
-- [X] T037 [US1] Implement the SEC EDGAR Form 4 client (submissions feed + ownership XML parsing) in `src/openinsider_tracker/ingestion/sec_edgar_form4.py` (depends on T010, T021; makes T026 pass)
-- [X] T038 [US1] Implement the SEC EDGAR buyback client (full-text search + Item 703 parsing) in `src/openinsider_tracker/ingestion/sec_buybacks.py` (depends on T011, T021; makes T027 pass)
-- [X] T039 [US1] Implement the OpenInsider-style feed client (rate-limited fetch + HTML parsing) in `src/openinsider_tracker/ingestion/openinsider_feed.py` (depends on T010, T021; makes T028 pass)
-- [X] T040 [US1] Implement de-duplication and supersession logic (natural keys per research.md §6): on detecting an amendment, set `superseded_by_id` on the prior `InsiderTransaction`/`BuybackEvent` row AND mark any `Signal` wrapping it as `is_superseded=true`, in `src/openinsider_tracker/ingestion/dedup.py` (depends on T017, T018, T019; makes T029, T030 pass)
+- [X] T037 [US1] Implement the SEC EDGAR Form 4 client (submissions feed + ownership XML parsing) in `src/insideoutside/ingestion/sec_edgar_form4.py` (depends on T010, T021; makes T026 pass)
+- [X] T038 [US1] Implement the SEC EDGAR buyback client (full-text search + Item 703 parsing) in `src/insideoutside/ingestion/sec_buybacks.py` (depends on T011, T021; makes T027 pass)
+- [X] T039 [US1] Implement the OpenInsider-style feed client (rate-limited fetch + HTML parsing) in `src/insideoutside/ingestion/openinsider_feed.py` (depends on T010, T021; makes T028 pass)
+- [X] T040 [US1] Implement de-duplication and supersession logic (natural keys per research.md §6): on detecting an amendment, set `superseded_by_id` on the prior `InsiderTransaction`/`BuybackEvent` row AND mark any `Signal` wrapping it as `is_superseded=true`, in `src/insideoutside/ingestion/dedup.py` (depends on T017, T018, T019; makes T029, T030 pass)
 - [X] T041 [US1] Wire the retry/backoff helper (T021) into all three ingestion clients so fetch failures retry instead of dropping silently (makes T031 pass)
-- [X] T042 [US1] Implement `ingest` orchestration — fetch all sources, de-duplicate, persist via repositories with provenance — in `src/openinsider_tracker/ingestion/orchestrator.py` (depends on T037-T041)
-- [X] T043 [US1] Wire the `ingest` CLI subcommand to the orchestrator with JSON summary output in `src/openinsider_tracker/cli/main.py` (depends on T042, T023; makes T033 pass)
-- [X] T044 [US1] Implement the notability classification engine covering BOTH signal types — insider transactions (dollar threshold, filer-role check, discretionary-vs-routine, setting `Signal.is_discretionary`) and buyback events (`min_buyback_amount` threshold, per FR-005) — in `src/openinsider_tracker/classification/rules.py` (depends on T013, T019, T020; makes T032 pass)
-- [X] T045 [US1] Wire the `classify` CLI subcommand in `src/openinsider_tracker/cli/main.py` (depends on T044, T023; makes T034 pass)
-- [X] T046 [US1] Implement `GET /api/signals` (filter/sort/paginate, always excluding `is_superseded=true`, including `is_discretionary` per contracts/api.md) in `src/openinsider_tracker/web/routes/signals.py` (depends on T019, T024; makes T035 pass)
-- [X] T047 [US1] Implement `GET /api/signals/{id}` in `src/openinsider_tracker/web/routes/signals.py` (depends on T046; makes T036 pass)
-- [X] T048 [US1] Register the signals routes on the FastAPI app in `src/openinsider_tracker/web/app.py` (depends on T046, T047, T024)
-- [X] T049 [US1] Implement the server-rendered dashboard page (Jinja2), using the same signal query as `/api/signals`, with source links and a visible discretionary/routine indicator per `is_discretionary` (SC-006), in `src/openinsider_tracker/web/routes/dashboard.py` and `src/openinsider_tracker/web/templates/dashboard.html` (depends on T046)
+- [X] T042 [US1] Implement `ingest` orchestration — fetch all sources, de-duplicate, persist via repositories with provenance — in `src/insideoutside/ingestion/orchestrator.py` (depends on T037-T041)
+- [X] T043 [US1] Wire the `ingest` CLI subcommand to the orchestrator with JSON summary output in `src/insideoutside/cli/main.py` (depends on T042, T023; makes T033 pass)
+- [X] T044 [US1] Implement the notability classification engine covering BOTH signal types — insider transactions (dollar threshold, filer-role check, discretionary-vs-routine, setting `Signal.is_discretionary`) and buyback events (`min_buyback_amount` threshold, per FR-005) — in `src/insideoutside/classification/rules.py` (depends on T013, T019, T020; makes T032 pass)
+- [X] T045 [US1] Wire the `classify` CLI subcommand in `src/insideoutside/cli/main.py` (depends on T044, T023; makes T034 pass)
+- [X] T046 [US1] Implement `GET /api/signals` (filter/sort/paginate, always excluding `is_superseded=true`, including `is_discretionary` per contracts/api.md) in `src/insideoutside/web/routes/signals.py` (depends on T019, T024; makes T035 pass)
+- [X] T047 [US1] Implement `GET /api/signals/{id}` in `src/insideoutside/web/routes/signals.py` (depends on T046; makes T036 pass)
+- [X] T048 [US1] Register the signals routes on the FastAPI app in `src/insideoutside/web/app.py` (depends on T046, T047, T024)
+- [X] T049 [US1] Implement the server-rendered dashboard page (Jinja2), using the same signal query as `/api/signals`, with source links and a visible discretionary/routine indicator per `is_discretionary` (SC-006), in `src/insideoutside/web/routes/dashboard.py` and `src/insideoutside/web/templates/dashboard.html` (depends on T046)
 
 **Checkpoint**: User Story 1 is fully functional and independently testable — matches quickstart.md's User Story 1 section.
 
@@ -135,10 +135,10 @@ without touching the dashboard UI.
 
 ### Implementation for User Story 2
 
-- [X] T053 [US2] Implement the email composer (subject/body with company, signal type, key figures, dashboard link) in `src/openinsider_tracker/notifications/composer.py` (depends on T010, T011, T012)
-- [X] T054 [US2] Implement the SMTP sender using config (T022), catching and reporting per-message failures without raising, in `src/openinsider_tracker/notifications/mailer.py`
-- [X] T055 [US2] Implement `notify` orchestration — select pending signals, send via composer+mailer, update `notification_status`/`notified_at` — in `src/openinsider_tracker/notifications/orchestrator.py` (depends on T053, T054, T019; makes T050-T052 pass)
-- [X] T056 [US2] Wire the `notify` CLI subcommand in `src/openinsider_tracker/cli/main.py` (depends on T055, T023)
+- [X] T053 [US2] Implement the email composer (subject/body with company, signal type, key figures, dashboard link) in `src/insideoutside/notifications/composer.py` (depends on T010, T011, T012)
+- [X] T054 [US2] Implement the SMTP sender using config (T022), catching and reporting per-message failures without raising, in `src/insideoutside/notifications/mailer.py`
+- [X] T055 [US2] Implement `notify` orchestration — select pending signals, send via composer+mailer, update `notification_status`/`notified_at` — in `src/insideoutside/notifications/orchestrator.py` (depends on T053, T054, T019; makes T050-T052 pass)
+- [X] T056 [US2] Wire the `notify` CLI subcommand in `src/insideoutside/cli/main.py` (depends on T055, T023)
 
 **Checkpoint**: User Stories 1 and 2 both work independently.
 
@@ -160,10 +160,10 @@ previously-included) signals cross the notability line accordingly.
 
 ### Implementation for User Story 3
 
-- [X] T060 [US3] Implement `GET /api/thresholds` and `PUT /api/thresholds` in `src/openinsider_tracker/web/routes/thresholds.py` (depends on T020, T024; makes T057 pass)
-- [X] T061 [US3] Register the thresholds routes on the FastAPI app in `src/openinsider_tracker/web/app.py` (depends on T060)
-- [X] T062 [US3] Wire `thresholds show`/`thresholds set` CLI subcommands in `src/openinsider_tracker/cli/main.py` (depends on T020, T023; makes T058 pass)
-- [X] T063 [US3] Add `--reclassify` support to the classification engine/CLI to re-evaluate all existing records against current thresholds, in `src/openinsider_tracker/classification/rules.py` and `src/openinsider_tracker/cli/main.py` (depends on T044, T045; makes T059 pass)
+- [X] T060 [US3] Implement `GET /api/thresholds` and `PUT /api/thresholds` in `src/insideoutside/web/routes/thresholds.py` (depends on T020, T024; makes T057 pass)
+- [X] T061 [US3] Register the thresholds routes on the FastAPI app in `src/insideoutside/web/app.py` (depends on T060)
+- [X] T062 [US3] Wire `thresholds show`/`thresholds set` CLI subcommands in `src/insideoutside/cli/main.py` (depends on T020, T023; makes T058 pass)
+- [X] T063 [US3] Add `--reclassify` support to the classification engine/CLI to re-evaluate all existing records against current thresholds, in `src/insideoutside/classification/rules.py` and `src/insideoutside/cli/main.py` (depends on T044, T045; makes T059 pass)
 
 **Checkpoint**: All three user stories are independently functional.
 
@@ -174,8 +174,8 @@ previously-included) signals cross the notability line accordingly.
 **Purpose**: Ties the stories together into the single deployable service and
 validates the whole thing end-to-end.
 
-- [X] T064 [P] Implement the in-process APScheduler wiring hourly (configurable) `ingest → classify → notify` calls, run on a background thread off the FastAPI event loop per research.md §5, in `src/openinsider_tracker/scheduler/scheduler.py`
-- [X] T065 Wire the `serve` CLI subcommand: start the FastAPI app and the scheduler (unless `--no-scheduler`), in `src/openinsider_tracker/cli/main.py` (depends on T024, T064)
+- [X] T064 [P] Implement the in-process APScheduler wiring hourly (configurable) `ingest → classify → notify` calls, run on a background thread off the FastAPI event loop per research.md §5, in `src/insideoutside/scheduler/scheduler.py`
+- [X] T065 Wire the `serve` CLI subcommand: start the FastAPI app and the scheduler (unless `--no-scheduler`), in `src/insideoutside/cli/main.py` (depends on T024, T064)
 - [X] T066 [P] Write the root `Dockerfile` building the app image and running `serve` as the entrypoint
 - [X] T067 [P] Write the root `docker-compose.yml` defining the single `app` service with a named volume for the SQLite file, per plan.md
 - [X] T068 [P] Add structured logging across ingestion/classification/notifications so parse/validation failures are always surfaced, never silently swallowed (Constitution Principle II)
@@ -199,8 +199,8 @@ the search box and confirm only matching rows remain visible.
 
 ### Implementation for User Story 4
 
-- [X] T071 [US4] Add per-row sort/search data attributes and sortable `<th>` headers to the dashboard template, in `src/openinsider_tracker/web/templates/dashboard.html` (makes T070 pass)
-- [X] T072 [US4] Implement client-side sort-on-click-header and filter-on-search-input behavior (vanilla JS, no new dependency) in `src/openinsider_tracker/web/templates/dashboard.html`; verified by manual browser testing per spec.md Assumptions (interactive DOM behavior is presentation, not data/business logic, so it sits outside Constitution Principle I's automated-test mandate — T070 covers the regression-prone part: that the template keeps emitting the attributes this script depends on)
+- [X] T071 [US4] Add per-row sort/search data attributes and sortable `<th>` headers to the dashboard template, in `src/insideoutside/web/templates/dashboard.html` (makes T070 pass)
+- [X] T072 [US4] Implement client-side sort-on-click-header and filter-on-search-input behavior (vanilla JS, no new dependency) in `src/insideoutside/web/templates/dashboard.html`; verified by manual browser testing per spec.md Assumptions (interactive DOM behavior is presentation, not data/business logic, so it sits outside Constitution Principle I's automated-test mandate — T070 covers the regression-prone part: that the template keeps emitting the attributes this script depends on)
 
 **Checkpoint**: All four user stories are independently functional.
 
@@ -226,9 +226,9 @@ is never sufficient.
 
 ### Implementation
 
-- [X] Add `min_notable_role_buy_value` (default 100,000) and `threshold_for_role()` to `src/openinsider_tracker/domain/threshold_configuration.py`
-- [X] Change `classify_insider_transaction` to AND semantics via `threshold_for_role`, in `src/openinsider_tracker/classification/rules.py`
-- [X] Add the column (`ThresholdConfigurationORM`) in `src/openinsider_tracker/storage/orm.py`, a new Alembic migration `0002_add_min_notable_role_buy_value.py` (server_default so existing rows backfill to 100,000 — verified against a real pre-existing Docker volume, not just a fresh database), and thread the field through `ThresholdConfigurationRepository`, the `/api/thresholds` request/response models, and the `thresholds` CLI subcommand (new `--min-notable-role-buy-value` flag)
+- [X] Add `min_notable_role_buy_value` (default 100,000) and `threshold_for_role()` to `src/insideoutside/domain/threshold_configuration.py`
+- [X] Change `classify_insider_transaction` to AND semantics via `threshold_for_role`, in `src/insideoutside/classification/rules.py`
+- [X] Add the column (`ThresholdConfigurationORM`) in `src/insideoutside/storage/orm.py`, a new Alembic migration `0002_add_min_notable_role_buy_value.py` (server_default so existing rows backfill to 100,000 — verified against a real pre-existing Docker volume, not just a fresh database), and thread the field through `ThresholdConfigurationRepository`, the `/api/thresholds` request/response models, and the `thresholds` CLI subcommand (new `--min-notable-role-buy-value` flag)
 
 **Verification**: confirmed live against the running Docker container — raising
 `min_notable_role_buy_value` above an existing director signal's amount and
@@ -258,26 +258,26 @@ confirm the last-selected option persists.
 ### Implementation for User Story 5
 
 - [X] T074 [US5] Raise the row limit passed to `query_signals` in
-  `src/openinsider_tracker/web/routes/dashboard.py` from the default 100 to a
+  `src/insideoutside/web/routes/dashboard.py` from the default 100 to a
   documented higher constant (e.g. 500) so page-size/infinite-scroll has enough
   already-rendered rows at the project's actual data volume (per spec.md
   Assumptions — no new query parameters, just a larger single fetch)
 - [X] T075 [US5] Add the page-size/infinite-scroll control markup (10/25/50/
   Infinite options) to the dashboard toolbar in
-  `src/openinsider_tracker/web/templates/dashboard.html` (makes T073 pass)
+  `src/insideoutside/web/templates/dashboard.html` (makes T073 pass)
 - [X] T076 [US5] Implement client-side page-size logic: show only the first N rows
   of the current sorted/filtered row set (from US4's `applyFilter`/sort output),
   re-applying whenever sort or search changes (FR-023), in
-  `src/openinsider_tracker/web/templates/dashboard.html` (depends on T071, T072,
+  `src/insideoutside/web/templates/dashboard.html` (depends on T071, T072,
   T075)
 - [X] T077 [US5] Implement infinite-scroll mode: a scroll listener that reveals
   the next batch of currently-hidden rows as the user nears the bottom of the
   visible list, showing a "no more signals" indicator once exhausted (edge case
-  in spec.md), in `src/openinsider_tracker/web/templates/dashboard.html` (depends
+  in spec.md), in `src/insideoutside/web/templates/dashboard.html` (depends
   on T076)
 - [X] T078 [US5] Persist the selected page-size/infinite-scroll option in
   `localStorage` and restore it on page load (FR-022), in
-  `src/openinsider_tracker/web/templates/dashboard.html` (depends on T075)
+  `src/insideoutside/web/templates/dashboard.html` (depends on T075)
 
 **Checkpoint**: All five user stories are independently functional.
 
@@ -324,9 +324,9 @@ Task: "Integration test: SEC buyback fixture parses correctly in tests/integrati
 Task: "Integration test: OpenInsider-style fixture parses correctly in tests/integration/ingestion/test_openinsider_feed.py"
 
 # Then the three ingestion clients together (different files, all depend only on Foundational):
-Task: "Implement SEC EDGAR Form 4 client in src/openinsider_tracker/ingestion/sec_edgar_form4.py"
-Task: "Implement SEC EDGAR buyback client in src/openinsider_tracker/ingestion/sec_buybacks.py"
-Task: "Implement OpenInsider-style feed client in src/openinsider_tracker/ingestion/openinsider_feed.py"
+Task: "Implement SEC EDGAR Form 4 client in src/insideoutside/ingestion/sec_edgar_form4.py"
+Task: "Implement SEC EDGAR buyback client in src/insideoutside/ingestion/sec_buybacks.py"
+Task: "Implement OpenInsider-style feed client in src/insideoutside/ingestion/openinsider_feed.py"
 ```
 
 ---

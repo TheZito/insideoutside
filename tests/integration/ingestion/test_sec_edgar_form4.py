@@ -2,7 +2,7 @@ from datetime import date, datetime
 from decimal import Decimal
 from pathlib import Path
 
-from openinsider_tracker.ingestion.sec_edgar_form4 import parse_form4_xml
+from insideoutside.ingestion.sec_edgar_form4 import parse_form4_xml
 
 FIXTURES = Path(__file__).parent.parent.parent / "fixtures"
 

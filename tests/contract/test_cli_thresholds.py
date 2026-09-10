@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from openinsider_tracker.cli.main import main
+from insideoutside.cli.main import main
 
 
 @pytest.fixture

@@ -1,8 +1,8 @@
-# CLI Contract: openinsider_tracker
+# CLI Contract: insideoutside
 
-Invoked as `python -m openinsider_tracker <command> [options]` — automatically by
+Invoked as `python -m insideoutside <command> [options]` — automatically by
 the in-process scheduler inside the single `app` container, or manually via
-`docker compose exec app python -m openinsider_tracker <command>`. Text in/out per
+`docker compose exec app python -m insideoutside <command>`. Text in/out per
 Constitution Principle IV: options in, structured result to stdout, errors to
 stderr with non-zero exit code.
 
@@ -13,7 +13,7 @@ safe to run when there is nothing pending. Run once before the first `serve`, an
 again after any upgrade that ships a schema change.
 
 ```text
-python -m openinsider_tracker migrate
+python -m insideoutside migrate
 ```
 
 - Exit 0: database is up to date (whether or not any migration actually ran).
@@ -27,7 +27,7 @@ Fetches new data from all configured sources and persists new/updated
 `InsiderTransaction` and `BuybackEvent` records.
 
 ```text
-python -m openinsider_tracker ingest [--source sec_edgar|openinsider|all] [--since DATE]
+python -m insideoutside ingest [--source sec_edgar|openinsider|all] [--since DATE]
 ```
 
 - Exit 0: ingestion completed (individual source failures are logged, not fatal,
@@ -41,7 +41,7 @@ Evaluates un-classified (or, with `--reclassify`, all) records against the curre
 `ThresholdConfiguration` and creates/updates `Signal` rows.
 
 ```text
-python -m openinsider_tracker classify [--reclassify]
+python -m insideoutside classify [--reclassify]
 ```
 
 - stdout: JSON summary — `{"evaluated": N, "notable": N}`.
@@ -51,7 +51,7 @@ python -m openinsider_tracker classify [--reclassify]
 Sends email notifications for `Signal` rows with `notification_status = pending`.
 
 ```text
-python -m openinsider_tracker notify
+python -m insideoutside notify
 ```
 
 - stdout: JSON summary — `{"sent": N, "failed": N}`.
@@ -64,7 +64,7 @@ Starts the FastAPI dashboard/API and the in-process scheduler that periodically
 runs `ingest` → `classify` → `notify` (used by the `app` container's entrypoint).
 
 ```text
-python -m openinsider_tracker serve [--host 0.0.0.0] [--port 8000] [--no-scheduler]
+python -m insideoutside serve [--host 0.0.0.0] [--port 8000] [--no-scheduler]
 ```
 
 `--no-scheduler` disables the background poll loop (useful for tests or when
@@ -76,10 +76,10 @@ Reads or updates the singleton `ThresholdConfiguration` (FR-014), independent of
 web API — usable for scripting/automation without the dashboard running.
 
 ```text
-python -m openinsider_tracker thresholds show
-python -m openinsider_tracker thresholds set --min-insider-buy-value 1000000
-python -m openinsider_tracker thresholds set --min-notable-role-buy-value 100000
-python -m openinsider_tracker thresholds set --notable-filer-roles officer,director
+python -m insideoutside thresholds show
+python -m insideoutside thresholds set --min-insider-buy-value 1000000
+python -m insideoutside thresholds set --min-notable-role-buy-value 100000
+python -m insideoutside thresholds set --notable-filer-roles officer,director
 ```
 
 `--min-notable-role-buy-value` is the threshold applied when the filer's role is in

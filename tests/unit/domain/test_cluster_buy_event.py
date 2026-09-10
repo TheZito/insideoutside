@@ -5,7 +5,7 @@ from uuid import uuid4
 import pytest
 from pydantic import ValidationError
 
-from openinsider_tracker.domain.cluster_buy_event import ClusterBuyEvent
+from insideoutside.domain.cluster_buy_event import ClusterBuyEvent
 
 
 def _valid_kwargs(**overrides):

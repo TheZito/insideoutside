@@ -2,10 +2,10 @@ from pathlib import Path
 
 import pytest
 
-from openinsider_tracker.cli.main import main
-from openinsider_tracker.config import load_config
-from openinsider_tracker.notifications.orchestrator import run_notify
-from openinsider_tracker.storage.db import Database
+from insideoutside.cli.main import main
+from insideoutside.config import load_config
+from insideoutside.notifications.orchestrator import run_notify
+from insideoutside.storage.db import Database
 
 FIXTURES = Path(__file__).parent.parent.parent / "fixtures"
 

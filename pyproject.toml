@@ -1,5 +1,5 @@
 [project]
-name = "openinsider-tracker"
+name = "insideoutside"
 version = "0.1.0"
 description = "Tracks notable SEC insider transactions and corporate stock buybacks, with a dashboard and email alerts."
 requires-python = ">=3.12"
@@ -25,7 +25,7 @@ dev = [
 ]
 
 [project.scripts]
-openinsider-tracker = "openinsider_tracker.__main__:main"
+insideoutside = "insideoutside.__main__:main"
 
 [build-system]
 requires = ["setuptools>=68"]
@@ -35,7 +35,7 @@ build-backend = "setuptools.build_meta"
 where = ["src"]
 
 [tool.setuptools.package-data]
-openinsider_tracker = ["web/templates/*.html"]
+insideoutside = ["web/templates/*.html"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

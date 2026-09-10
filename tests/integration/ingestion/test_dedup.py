@@ -3,15 +3,15 @@ from decimal import Decimal
 
 import pytest
 
-from openinsider_tracker.domain.insider_transaction import InsiderTransaction
-from openinsider_tracker.domain.signal import Signal
-from openinsider_tracker.ingestion.dedup import ingest_insider_transaction
-from openinsider_tracker.storage.db import Database
-from openinsider_tracker.storage.migrations import apply_migrations
-from openinsider_tracker.storage.repositories.insider_transaction_repo import (
+from insideoutside.domain.insider_transaction import InsiderTransaction
+from insideoutside.domain.signal import Signal
+from insideoutside.ingestion.dedup import ingest_insider_transaction
+from insideoutside.storage.db import Database
+from insideoutside.storage.migrations import apply_migrations
+from insideoutside.storage.repositories.insider_transaction_repo import (
     InsiderTransactionRepository,
 )
-from openinsider_tracker.storage.repositories.signal_repo import SignalRepository
+from insideoutside.storage.repositories.signal_repo import SignalRepository
 
 
 @pytest.fixture

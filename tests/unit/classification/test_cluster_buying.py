@@ -1,9 +1,9 @@
 from datetime import date, datetime
 from decimal import Decimal
 
-from openinsider_tracker.classification.cluster_buying import classify_cluster, detect_clusters
-from openinsider_tracker.domain.insider_transaction import InsiderTransaction
-from openinsider_tracker.domain.threshold_configuration import ThresholdConfiguration
+from insideoutside.classification.cluster_buying import classify_cluster, detect_clusters
+from insideoutside.domain.insider_transaction import InsiderTransaction
+from insideoutside.domain.threshold_configuration import ThresholdConfiguration
 
 
 def _txn(**overrides):

@@ -1,7 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
-from openinsider_tracker.domain.signal import Signal
+from insideoutside.domain.signal import Signal
 
 
 def _valid_kwargs(**overrides):

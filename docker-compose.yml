@@ -5,18 +5,18 @@ services:
       - "8000:8000"
     env_file: .env
     environment:
-      DB_PATH: /data/openinsider_tracker.db
+      DB_PATH: /data/insideoutside.db
       SMTP_HOST: ${SMTP_HOST}
       SMTP_PORT: ${SMTP_PORT}
       SMTP_USER: ${SMTP_USER}
       SMTP_PASSWORD: ${SMTP_PASSWORD}
       SMTP_USE_TLS: ${SMTP_USE_TLS:-true}
       NOTIFY_EMAIL_TO: ${NOTIFY_EMAIL_TO}
-      NOTIFY_EMAIL_FROM: ${NOTIFY_EMAIL_FROM:-openinsider-tracker@localhost}
+      NOTIFY_EMAIL_FROM: ${NOTIFY_EMAIL_FROM:-insideoutside@localhost}
       POLL_INTERVAL_MINUTES: ${POLL_INTERVAL_MINUTES:-60}
     volumes:
-      - openinsider_data:/data
+      - insideoutside_data:/data
     restart: unless-stopped
 
 volumes:
-  openinsider_data:
+  insideoutside_data:

@@ -3,7 +3,7 @@ from decimal import Decimal
 import pytest
 from pydantic import ValidationError
 
-from openinsider_tracker.domain.threshold_configuration import ThresholdConfiguration
+from insideoutside.domain.threshold_configuration import ThresholdConfiguration
 
 
 def test_defaults_match_spec_assumptions():

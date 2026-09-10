@@ -4,14 +4,14 @@ from uuid import uuid4
 
 import pytest
 
-from openinsider_tracker.domain.cluster_buy_event import ClusterBuyEvent
-from openinsider_tracker.domain.signal import Signal
-from openinsider_tracker.notifications.composer import compose_signal_email
-from openinsider_tracker.storage.db import Database
-from openinsider_tracker.storage.migrations import apply_migrations
-from openinsider_tracker.storage.repositories.buyback_repo import BuybackEventRepository
-from openinsider_tracker.storage.repositories.cluster_buy_repo import ClusterBuyEventRepository
-from openinsider_tracker.storage.repositories.insider_transaction_repo import (
+from insideoutside.domain.cluster_buy_event import ClusterBuyEvent
+from insideoutside.domain.signal import Signal
+from insideoutside.notifications.composer import compose_signal_email
+from insideoutside.storage.db import Database
+from insideoutside.storage.migrations import apply_migrations
+from insideoutside.storage.repositories.buyback_repo import BuybackEventRepository
+from insideoutside.storage.repositories.cluster_buy_repo import ClusterBuyEventRepository
+from insideoutside.storage.repositories.insider_transaction_repo import (
     InsiderTransactionRepository,
 )
 

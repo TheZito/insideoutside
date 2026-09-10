@@ -5,7 +5,7 @@ mentioned here is unchanged — no new subcommand is introduced.
 
 ## `classify`
 
-Unchanged interface (`python -m openinsider_tracker classify [--reclassify]`),
+Unchanged interface (`python -m insideoutside classify [--reclassify]`),
 but its JSON summary gains cluster counts:
 
 ```json
@@ -20,8 +20,8 @@ with qualifying transactions, not just per-record classification.
 `show` and `set` gain two new fields/flags:
 
 ```text
-python -m openinsider_tracker thresholds set --cluster-window-days 14
-python -m openinsider_tracker thresholds set --min-cluster-filer-count 2
+python -m insideoutside thresholds set --cluster-window-days 14
+python -m insideoutside thresholds set --min-cluster-filer-count 2
 ```
 
 Same rules as the existing flags: omitted flags keep their current value;

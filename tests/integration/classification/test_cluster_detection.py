@@ -2,9 +2,9 @@ from pathlib import Path
 
 import pytest
 
-from openinsider_tracker.cli.main import main
-from openinsider_tracker.storage.db import Database
-from openinsider_tracker.web.routes.signals import query_signals
+from insideoutside.cli.main import main
+from insideoutside.storage.db import Database
+from insideoutside.web.routes.signals import query_signals
 
 FIXTURES = Path(__file__).parent.parent.parent / "fixtures"
 
@@ -103,8 +103,8 @@ def test_raising_min_filer_count_makes_cluster_not_notable_and_lowering_restores
 def test_narrowing_window_splits_an_already_sent_cluster_without_erasing_its_history(
     db_env, capsys
 ):
-    from openinsider_tracker.config import load_config
-    from openinsider_tracker.notifications.orchestrator import run_notify
+    from insideoutside.config import load_config
+    from insideoutside.notifications.orchestrator import run_notify
 
     _ingest("sample_form4_cluster_filer_a.xml")  # 2026-08-01
     _ingest("sample_form4_cluster_filer_b.xml")  # 2026-08-04

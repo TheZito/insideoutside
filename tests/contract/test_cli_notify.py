@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from openinsider_tracker.cli.main import main
+from insideoutside.cli.main import main
 
 FIXTURES = Path(__file__).parent.parent / "fixtures"
 
@@ -34,8 +34,8 @@ def test_notify_sends_one_email_per_pending_signal_and_marks_sent(
     def fake_send_email(config, *, to, subject, body):
         sent_messages.append((to, subject, body))
 
-    import openinsider_tracker.cli.commands.notify as notify_module
-    from openinsider_tracker.notifications.orchestrator import run_notify
+    import insideoutside.cli.commands.notify as notify_module
+    from insideoutside.notifications.orchestrator import run_notify
 
     monkeypatch.setattr(
         notify_module,

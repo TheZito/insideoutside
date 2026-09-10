@@ -4,10 +4,10 @@ from uuid import uuid4
 
 import pytest
 
-from openinsider_tracker.domain.cluster_buy_event import ClusterBuyEvent
-from openinsider_tracker.storage.db import Database
-from openinsider_tracker.storage.migrations import apply_migrations
-from openinsider_tracker.storage.repositories.cluster_buy_repo import ClusterBuyEventRepository
+from insideoutside.domain.cluster_buy_event import ClusterBuyEvent
+from insideoutside.storage.db import Database
+from insideoutside.storage.migrations import apply_migrations
+from insideoutside.storage.repositories.cluster_buy_repo import ClusterBuyEventRepository
 
 
 @pytest.fixture

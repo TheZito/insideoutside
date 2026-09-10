@@ -16,16 +16,16 @@ Deployment).
 
 ```bash
 docker compose up -d
-docker compose exec app python -m openinsider_tracker migrate   # apply schema
+docker compose exec app python -m insideoutside migrate   # apply schema
 ```
 
 ## Validate User Story 1 — dashboard shows notable signals
 
 1. Seed a known fixture instead of waiting for a live poll:
    ```bash
-   docker compose exec app python -m openinsider_tracker ingest --source sec_edgar --fixture tests/fixtures/sample_form4_large_buy.xml
-   docker compose exec app python -m openinsider_tracker ingest --source sec_edgar --fixture tests/fixtures/sample_8k_buyback_100m.xml
-   docker compose exec app python -m openinsider_tracker classify
+   docker compose exec app python -m insideoutside ingest --source sec_edgar --fixture tests/fixtures/sample_form4_large_buy.xml
+   docker compose exec app python -m insideoutside ingest --source sec_edgar --fixture tests/fixtures/sample_8k_buyback_100m.xml
+   docker compose exec app python -m insideoutside classify
    ```
 2. Open `http://localhost:8000` (or `curl http://localhost:8000/api/signals`).
 3. **Expected**: both the insider buy and the buyback appear, most recent first,
@@ -36,7 +36,7 @@ docker compose exec app python -m openinsider_tracker migrate   # apply schema
 ## Validate User Story 2 — email on new notable signal
 
 ```bash
-docker compose exec app python -m openinsider_tracker notify
+docker compose exec app python -m insideoutside notify
 ```
 
 **Expected**: one email arrives at `NOTIFY_EMAIL_TO` for each newly-notable signal
@@ -49,7 +49,7 @@ dashboard link. Re-running `notify` sends no duplicate email for the same signal
 curl -X PUT http://localhost:8000/api/thresholds \
   -H 'Content-Type: application/json' \
   -d '{"min_insider_buy_value": 100000, "notable_filer_roles": ["officer","director"], "min_buyback_amount": 50000000}'
-docker compose exec app python -m openinsider_tracker classify --reclassify
+docker compose exec app python -m insideoutside classify --reclassify
 ```
 
 **Expected**: previously below-threshold insider transactions in the fixture data
